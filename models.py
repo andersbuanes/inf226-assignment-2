@@ -1,7 +1,7 @@
 from app import db
 from flask_login import UserMixin
 
-class User(UserMixin, db.model):
+class User(UserMixin, db.Model):
     __bind_key__ = 'auth'
     __tablename__ = 'user'
     
@@ -15,7 +15,7 @@ class User(UserMixin, db.model):
 class Message(db.Model):
     __bind_key__ = 'content'
     __tablename__ = 'messages'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     sender = db.Column(db.String(80), nullable=False)
     message = db.Column(db.String(500), nullable=False)

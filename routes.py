@@ -1,7 +1,6 @@
 from http import HTTPStatus
 from sqlite3 import DataError, DatabaseError, IntegrityError, InterfaceError
 from flask import (
-    Flask,
     abort,
     render_template,
     redirect,
@@ -13,95 +12,20 @@ from flask import (
 )
 import flask
 
-from datetime import timedelta
-from sqlalchemy.exc import (
-    IntegrityError,
-    DataError,
-    DatabaseError,
-    InterfaceError,
-)
-
 from werkzeug.datastructures import WWWAuthenticate
 from werkzeug.routing import BuildError
 
-from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
-
 from flask_login import (
-    UserMixin,
     login_user,
-    LoginManager,
-    current_user,
-    logout_user,
     login_required,
 )
 
-from app import create_app, db, login_manager, bcrypt
 from models import User
 from login_form import LoginForm
-
-# Keep current user loaded in the session
-@login_manager.user_loader
-def user_loader(user_id):
-    return User.query.get(int(user_id))
-
-# This method is called whenever the login manager needs to get
-# the User object for a given user id
-@login_manager.user_loader
-def user_loader(user_id) -> User or None:
-    if user_id not in users:
-        return
-
-    # For a real app, we would load the User from a database or something
-    user = User()
-    user.id = user_id
-    return user
-
-
-# This method is called to get a User object based on a request,
-# for example, if using an api key or authentication token rather
-# than getting the user name the standard way (from the session cookie)
-@login_manager.request_loader
-def request_loader(request) -> User or None:
-    # Even though this HTTP header is primarily used for *authentication*
-    # rather than *authorization*, it's still called "Authorization".
-    auth = request.headers.get('Authorization')
-
-    # If there is not Authorization header, do nothing, and the login
-    # manager will deal with it (i.e., by redirecting to a login page)
-    if not auth:
-        return
-
-    (auth_scheme, auth_params) = auth.split(maxsplit=1)
-    auth_scheme = auth_scheme.casefold()
-    if auth_scheme == 'basic':  # Basic auth has username:password in base64
-        (uid,passwd) = b64decode(auth_params.encode(errors='ignore')).decode(errors='ignore').split(':', maxsplit=1)
-        print(f'Basic auth: {uid}:{passwd}')
-        u = users.get(uid)
-        if u: # and check_password(u.password, passwd):
-            return user_loader(uid)
-    elif auth_scheme == 'bearer': # Bearer auth contains an access token;
-        # an 'access token' is a unique string that both identifies
-        # and authenticates a user, so no username is provided (unless
-        # you encode it in the token – see JWT (JSON Web Token), which
-        # encodes credentials and (possibly) authorization info)
-        print(f'Bearer auth: {auth_params}')
-        for uid in users:
-            if users[uid].get('token') == auth_params:
-                return user_loader(uid)
-    # For other authentication schemes, see
-    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication
-
-    # If we failed to find a valid Authorized header or valid credentials, fail
-    # with "401 Unauthorized" and a list of valid authentication schemes
-    # (The presence of the Authorized header probably means we're talking to
-    # a program and not a user in a browser, so we should send a proper
-    # error message rather than redirect to the login page.)
-    # (If an authenticated user doesn't have authorization to view a page,
-    # Flask will send a "403 Forbidden" response, so think of
-    # "Unauthorized" as "Unauthenticated" and "Forbidden" as "Unauthorized")
-    abort(HTTPStatus.UNAUTHORIZED, www_authenticate = WWWAuthenticate('Basic realm=inf226, Bearer'))
-
-app = create_app()
+from data_handling import get_search
+from app import app
+from utils import is_safe_url
+from login_manager import user_loader
 
 @app.route('/favicon.ico')
 def favicon_ico():
@@ -113,11 +37,11 @@ def favicon_png():
 
 # Home route
 @app.route('/')
-@app.route('index.html')
+@app.route('/index.html')
 @login_required
 def index_html():
     return send_from_directory(app.root_path,
-                'index.html', mimetype='text/hml')
+                'index.html', mimetype='text/html')
 
 # Login route
 @app.route('/login', methods=['GET', 'POST'])
@@ -156,18 +80,7 @@ def login():
 @login_required
 def search():
     query = request.args.get('q') or request.form.get('q') or '*'
-    stmt = f"SELECT * FROM messages WHERE message GLOB '{query}'"
-    result = f"Query: {pygmentize(stmt)}\n"
-    try:
-        c = conn.execute(stmt)
-        rows = c.fetchall()
-        result = result + 'Result:\n'
-        for row in rows:
-            result = f'{result}    {dumps(row)}\n'
-        c.close()
-        return result
-    except Error as e:
-        return (f'{result}ERROR: {e}', 500)
+    return get_search(query)
 
 # Send route
 @app.route('/send', methods=['POST','GET'])
@@ -184,3 +97,30 @@ def send():
         return f'{result}ok'
     except Error as e:
         return f'{result}ERROR: {e}'
+
+@app.get('/announcements')
+def announcements():
+    try:
+        stmt = f"SELECT author,text FROM announcements;"
+        c = conn.execute(stmt)
+        anns = []
+        for row in c:
+            anns.append({'sender':escape(row[0]), 'message':escape(row[1])})
+        return {'data':anns}
+    except Error as e:
+        return {'error': f'{e}'}
+
+@app.get('/coffee/')
+def nocoffee():
+    abort(418)
+
+@app.route('/coffee/', methods=['POST','PUT'])
+def gotcoffee():
+    return "Thanks!"
+
+@app.get('/highlight.css')
+def highlightStyle():
+    resp = make_response(cssData)
+    resp.content_type = 'text/css'
+    return resp
+
