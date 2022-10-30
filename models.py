@@ -19,3 +19,18 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender = db.Column(db.String(80), nullable=False)
     message = db.Column(db.String(500), nullable=False)
+
+    def __repr__(self):
+        return "<Message %r>" % self.message
+
+
+class Announcement(db.Model):
+    __bind_key__ = 'content'
+    __tablename__ = 'announcement'
+
+    id = db.Column(db.Integer, primary_key=True)
+    auther = db.Column(db.String(80), nullable=False)
+    text = db.Column(db.String(500), nullable=False)
+
+    def __repr__(self):
+        return "<Announcement %r>" % self.text

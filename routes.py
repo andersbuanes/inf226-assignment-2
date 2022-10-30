@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from sqlite3 import DataError, DatabaseError, IntegrityError, InterfaceError
+from apsw import Error
 from flask import (
     abort,
     render_template,
@@ -8,7 +9,8 @@ from flask import (
     url_for,
     send_from_directory,
     request,
-    session
+    session,
+    make_response
 )
 import flask
 
@@ -20,12 +22,14 @@ from flask_login import (
     login_required,
 )
 
-from models import User
+from models import Announcement, Message, User
 from login_form import LoginForm
-from data_handling import get_search
-from app import app
-from utils import is_safe_url
+from data_handling import DataHandler
+from app import app, db
+from utils import is_safe_url, cssData, pygmentize
 from login_manager import user_loader
+
+dataHandler = DataHandler()
 
 @app.route('/favicon.ico')
 def favicon_ico():
@@ -42,6 +46,13 @@ def favicon_png():
 def index_html():
     return send_from_directory(app.root_path,
                 'index.html', mimetype='text/html')
+
+def hash_password(password):
+    # todo add hashing
+    return password
+
+def check_password_hash(stored_password_hash: str, inputed_password: str):
+    return stored_password_hash == hash_password(inputed_password)
 
 # Login route
 @app.route('/login', methods=['GET', 'POST'])
@@ -74,13 +85,22 @@ def login():
             return flask.redirect(next or flask.url_for('index'))
     return render_template('./login.html', form=form)
 
+def to_dict(o):
+    r = {}
+    for e in o.__dict__.keys():
+        if not e.startswith('_'):
+            r[e] = o.__dict__[e]
+
+    return r
+
 
 # Search route
 @app.get('/search')
-@login_required
 def search():
     query = request.args.get('q') or request.form.get('q') or '*'
-    return get_search(query)
+    m =  dataHandler.get_messages()
+    return [to_dict(a) for a in m]
+    #return dataHandler.get_search(query)
 
 # Send route
 @app.route('/send', methods=['POST','GET'])
@@ -91,24 +111,16 @@ def send():
         message = request.args.get('message') or request.args.get('message')
         if not sender or not message:
             return f'ERROR: missing sender or message'
-        stmt = f"INSERT INTO messages (sender, message) values ('{sender}', '{message}');"
-        result = f"Query: {pygmentize(stmt)}\n"
-        conn.execute(stmt)
-        return f'{result}ok'
+
+        dataHandler.post_simple_message(sender, message)
+
+        return f'ok'
     except Error as e:
-        return f'{result}ERROR: {e}'
+        return f'ERROR: {e}'
 
 @app.get('/announcements')
 def announcements():
-    try:
-        stmt = f"SELECT author,text FROM announcements;"
-        c = conn.execute(stmt)
-        anns = []
-        for row in c:
-            anns.append({'sender':escape(row[0]), 'message':escape(row[1])})
-        return {'data':anns}
-    except Error as e:
-        return {'error': f'{e}'}
+    return dataHandler.get_announcments()
 
 @app.get('/coffee/')
 def nocoffee():
