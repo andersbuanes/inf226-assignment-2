@@ -1,6 +1,7 @@
 from typing import List
 from datetime import datetime
-
+from sqlalchemy import or_
+from sqlalchemy.orm import contains_eager
 
 from models import Message, User
 from database import db
@@ -11,6 +12,12 @@ class DataHandler():
         result = authenticated_user.received_messages + authenticated_user.send_messages
         result.sort(key=lambda x: x.timestamp)
         return result
+    
+    def get_message(self, message_id, authenticated_user: User) -> Message:
+        return Message.query.join(Message.recipients).options(contains_eager(Message.recipients)) \
+            .filter(or_(User.id == authenticated_user.id, Message.sender_id == authenticated_user.id)) \
+            .filter(Message.id == message_id).first()
+        
 
     def get_users(self) -> List[User]:
         return User.query.all()
