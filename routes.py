@@ -10,52 +10,56 @@ from flask import (
     send_from_directory,
     request,
     session,
-    make_response
+    make_response,
+    Blueprint
 )
 import flask
+import bcrypt
 
 from werkzeug.datastructures import WWWAuthenticate
 from werkzeug.routing import BuildError
 
 from flask_login import (
     login_user,
+    logout_user,
     login_required,
 )
 
-from models import Announcement, Message, User
 from login_form import LoginForm
 from data_handling import DataHandler
-from app import app, db
 from utils import is_safe_url, cssData, pygmentize
-from login_manager import user_loader
+from login_manager import User, user_loader
 
 dataHandler = DataHandler()
+routes = Blueprint('routes', __name__)
 
-@app.route('/favicon.ico')
+@routes.route('/favicon.ico')
 def favicon_ico():
-    return send_from_directory(app.root_path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+    return send_from_directory(routes.root_path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-@app.route('/favicon.png')
+@routes.route('/favicon.png')
 def favicon_png():
-    return send_from_directory(app.root_path, 'favicon.png', mimetype='image/png')
+    return send_from_directory(routes.root_path, 'favicon.png', mimetype='image/png')
 
 # Home route
-@app.route('/')
-@app.route('/index.html')
+@routes.route('/')
+@routes.route('/index.html')
 @login_required
 def index_html():
-    return send_from_directory(app.root_path,
+    return send_from_directory(routes.root_path,
                 'index.html', mimetype='text/html')
 
 def hash_password(password):
-    # todo add hashing
-    return password
+    salt = bcrypt.gensalt()
+    password_hashed = bcrypt.hashpw(password, salt)
+    
+    return (password_hashed, salt)
 
 def check_password_hash(stored_password_hash: str, inputed_password: str):
     return stored_password_hash == hash_password(inputed_password)
 
 # Login route
-@app.route('/login', methods=['GET', 'POST'])
+@routes.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.is_submitted():
@@ -64,13 +68,13 @@ def login():
     if form.validate_on_submit():
         # TODO: we must check the username and password
         username = form.username.data
+        
         password = form.password.data
-        u = User.query.filter_by(username=username).first()
+        u = User()
         
         if u and check_password_hash(u.password, password):
             user = user_loader(username)
             
-            # automatically sets logged in session cookie
             login_user(user)
 
             flask.flash('Logged in successfully.')
@@ -93,9 +97,15 @@ def to_dict(o):
 
     return r
 
+@routes.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return flask.redirect('/')
 
 # Search route
-@app.get('/search')
+@routes.get('/search')
+@login_required
 def search():
     query = request.args.get('q') or request.form.get('q') or '*'
     m =  dataHandler.get_messages()
@@ -103,7 +113,7 @@ def search():
     #return dataHandler.get_search(query)
 
 # Send route
-@app.route('/send', methods=['POST','GET'])
+@routes.route('/send', methods=['POST','GET'])
 @login_required
 def send():
     try:
@@ -118,19 +128,19 @@ def send():
     except Error as e:
         return f'ERROR: {e}'
 
-@app.get('/announcements')
+@routes.get('/announcements')
 def announcements():
     return dataHandler.get_announcments()
 
-@app.get('/coffee/')
+@routes.get('/coffee/')
 def nocoffee():
     abort(418)
 
-@app.route('/coffee/', methods=['POST','PUT'])
+@routes.route('/coffee/', methods=['POST','PUT'])
 def gotcoffee():
     return "Thanks!"
 
-@app.get('/highlight.css')
+@routes.get('/highlight.css')
 def highlightStyle():
     resp = make_response(cssData)
     resp.content_type = 'text/css'
