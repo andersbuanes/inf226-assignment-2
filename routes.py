@@ -24,13 +24,17 @@ from flask_login import (
     logout_user,
     login_required,
 )
+from auth_handling import AuthHandler
 
 from login_form import LoginForm
 from data_handling import DataHandler
+from models import User
+from register_form import RegisterForm
 from utils import is_safe_url, cssData, pygmentize
-from login_manager import User, user_loader
+from login_manager import user_loader
 
-dataHandler = DataHandler()
+data_handler = DataHandler()
+auth_handler = AuthHandler()
 routes = Blueprint('routes', __name__)
 
 @routes.route('/favicon.ico')
@@ -58,6 +62,25 @@ def hash_password(password):
 def check_password_hash(stored_password_hash: str, inputed_password: str):
     return stored_password_hash == hash_password(inputed_password)
 
+@routes.route('/register', methods=['POST'])
+def register():
+    form = RegisterForm()
+    if form.is_submitted():
+        print(f'Received form: {"invalid" if not form.validate() else "valid"} {form.form_errors} {form.errors}')
+        print(request.form)
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        
+        user = auth_handler.get_user(username)
+        
+        if user:
+            return redirect(url_for('routes.register'))
+        auth_handler.create_user(username, password)
+                
+        return redirect(url_for('routes.login'))
+    return render_template('register.html')
+
 # Login route
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
@@ -66,27 +89,26 @@ def login():
         print(f'Received form: {"invalid" if not form.validate() else "valid"} {form.form_errors} {form.errors}')
         print(request.form)
     if form.validate_on_submit():
-        # TODO: we must check the username and password
         username = form.username.data
-        
         password = form.password.data
+        
         u = User()
         
-        if u and check_password_hash(u.password, password):
+        if u: #and check_password_hash(u.password, password):
             user = user_loader(username)
+            print(user)
             
-            login_user(user)
+        login_user(user)
+        print('User authenticated: %b' % user.is_authenticated)
 
-            flask.flash('Logged in successfully.')
+        flask.flash('Logged in successfully.')
 
-            next = flask.request.args.get('next')
-    
-            # is_safe_url should check if the url is safe for redirects.
-            # See http://flask.pocoo.org/snippets/62/ for an example.
-            if not is_safe_url(next):
-                return flask.abort(400)
+        next = flask.request.args.get('next')
 
-            return flask.redirect(next or flask.url_for('index'))
+        if not is_safe_url(next):
+            return flask.abort(400)
+
+        return flask.redirect(url_for('index'))
     return render_template('./login.html', form=form)
 
 def to_dict(o):
@@ -108,7 +130,7 @@ def logout():
 @login_required
 def search():
     query = request.args.get('q') or request.form.get('q') or '*'
-    m =  dataHandler.get_messages()
+    m =  data_handler.get_messages()
     return [to_dict(a) for a in m]
     #return dataHandler.get_search(query)
 
@@ -122,7 +144,7 @@ def send():
         if not sender or not message:
             return f'ERROR: missing sender or message'
 
-        dataHandler.post_simple_message(sender, message)
+        data_handler.post_simple_message(sender, message)
 
         return f'ok'
     except Error as e:
@@ -130,7 +152,7 @@ def send():
 
 @routes.get('/announcements')
 def announcements():
-    return dataHandler.get_announcments()
+    return data_handler.get_announcments()
 
 @routes.get('/coffee/')
 def nocoffee():

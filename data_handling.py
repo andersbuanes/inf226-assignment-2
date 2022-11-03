@@ -1,5 +1,5 @@
 from models import Announcement, Message
-from app import db
+from database import db
 
 class DataHandler():
     def get_messages(self):
