@@ -1,6 +1,5 @@
 from database import db
-from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String
 
 class User(db.Model):
     __bind_key__ = 'auth'
@@ -9,6 +8,7 @@ class User(db.Model):
     id = Column(Integer, primary_key=True)
     username = Column(String(80), unique=True, nullable=False)
     password = Column(String(300), unique=True, nullable=False)
+    salt = Column(String(300), unique=True, nullable=False)
     
     def __repr__(self):
         return "<User %r>" % self.username

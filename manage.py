@@ -19,7 +19,7 @@ def deploy():
     upgrade()
     
     dh = DataHandler()
-    dh.add_user('alice', "testtest")
-    dh.add_user('bob', '12345678')
+    dh.add_user('alice', 'testtest')
+    dh.add_user('bob', 'password123')
     
 deploy()
