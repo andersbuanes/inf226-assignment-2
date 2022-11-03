@@ -1,6 +1,5 @@
 from flask_migrate import Migrate
 from data_handling import DataHandler
-import models
 
 def deploy():
     from app import create_app

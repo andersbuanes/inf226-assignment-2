@@ -26,11 +26,45 @@ To improve security we decided on restructuring the project.
 
 - No application logger -> traceability
 
-### Protect pages
-*Send*- and *Search*-route is not protected. We should require login to access or modify data. Solution: Add *@login_required* to these paths. Protecting pages ensures that only people with access are allowed to make requests.
+## Questions
+## Threat Model
+### Who might attack the application?
 
-### Prepared Statements
-The application is vulnerable to SQL injection. Using prepared statements ...
+### What can an attacker do?
+- Access information they are not authorized to see
+    - There was initially no authorization or access control in place
+    - An attacker could access any information they would want
+    - An attacker could send any information they would want
 
++ Obtain user information
+    - Passwords were stored in the source code
+    - SQLi to access passwords
 
-- Session protection = "strong" secures ...
+- Crash the application
+    - No protection against DDOS
+    - No protection against SQLi
+    - No protection against XSS
+
++ Spoofing
+    - The secret key was not secured, nor random. Easy for an attacker to hijack session.
+    - There was no validation of passwords. As long as an attacker knew a username they could "log in".
+    - Lack of protection against Cross-site Request Forgery.
+
+### What damage could be done?
+CIA-triad
+- Confidentiality
+    - asd
+
++ Integrity
+    - asd
+
+- Availability
+    -   sd
+
+## Attack Vectors
+
+## Protection
+
+## Access Control Model
+
+## Traceability

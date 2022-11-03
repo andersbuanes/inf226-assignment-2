@@ -3,9 +3,9 @@ from werkzeug.datastructures import WWWAuthenticate
 from http import HTTPStatus
 from flask import abort
 from base64 import b64decode
-from auth_handling import AuthHandler
+from data_handling import DataHandler
 
-auth_handler = AuthHandler()
+data_handler = DataHandler()
 login_manager = LoginManager()
 
 
@@ -25,7 +25,7 @@ class User(UserMixin):
 # the User object for a given user id
 @login_manager.user_loader
 def user_loader(user_id) -> User or None:
-    user = auth_handler.get_user(user_id)
+    user = data_handler.get_user(user_id)
     
     if not user:
         return

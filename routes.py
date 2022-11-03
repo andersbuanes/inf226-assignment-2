@@ -19,16 +19,14 @@ from flask_login import (
     logout_user,
     login_required,
 )
-from auth_handling import AuthHandler
 from data_handling import DataHandler
 from login_form import LoginForm
 from register_form import RegisterForm
 from models import User
-from utils import is_safe_url, cssData, pygmentize
+from utils import check_password_hash, is_safe_url, cssData, pygmentize
 from login_manager import user_loader
 
 data_handler = DataHandler()
-auth_handler = AuthHandler()
 routes = Blueprint('routes', __name__)
 
 @routes.route('/favicon.ico')
@@ -47,15 +45,6 @@ def index_html():
     return send_from_directory(routes.root_path,
                 'index.html', mimetype='text/html')
 
-def hash_password(password):
-    salt = bcrypt.gensalt()
-    password_hashed = bcrypt.hashpw(password, salt)
-    
-    return (password_hashed, salt)
-
-def check_password_hash(stored_password_hash: str, inputed_password: str):
-    return stored_password_hash == hash_password(inputed_password)
-
 @routes.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -66,11 +55,11 @@ def register():
         username = form.username.data
         password = form.password.data
         
-        user = auth_handler.get_user(username)
+        user = data_handler.get_user(username)
         
         if user:
             return redirect(url_for('routes.register'))
-        auth_handler.create_user(username, password)
+        data_handler.add_user(username, password)
                 
         return redirect(url_for('routes.login'))
     return render_template('register.html', form=form)
@@ -86,23 +75,22 @@ def login():
         username = form.username.data
         password = form.password.data
         
-        u = User()
+        u = data_handler.get_user(username)
+        print(u)
         
-        if u: #and check_password_hash(u.password, password):
+        if u and check_password_hash(u.password, password, u.salt):
             user = user_loader(username)
-            print(user)
             
-        login_user(user)
-        print('User authenticated: %b' % user.is_authenticated)
+            login_user(user)
 
-        flask.flash('Logged in successfully.')
+            flask.flash('Logged in successfully.')
 
-        next = flask.request.args.get('next')
+            next = flask.request.args.get('next')
 
-        if not is_safe_url(next):
-            return flask.abort(400)
+            if not is_safe_url(next):
+                return flask.abort(400)
 
-        return flask.redirect(url_for('index'))
+            return flask.redirect(next or '/')
     return render_template('./login.html', form=form)
 
 def to_dict(o):
@@ -119,7 +107,6 @@ def logout():
     logout_user()
     return flask.redirect('/')
 
-# Search route
 @routes.get('/search')
 @login_required
 def search():

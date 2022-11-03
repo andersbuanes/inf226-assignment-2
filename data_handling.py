@@ -1,7 +1,7 @@
 from typing import List
 from models import Message, User
 from database import db
-from pprint import pprint
+from utils import hash_password
 
 class DataHandler():
     def get_messages(self, authenticated_user: User) -> List[Message]:
@@ -11,15 +11,17 @@ class DataHandler():
     def get_users(self) -> List[User]:
         return User.query.all()
     
-
+    def get_user(self, username) -> User:
+        return User.query.filter_by(username=username).first()
+    
     def get_search(self, query) -> List[Message]:
         return db.session.execute(db.select(Message).filter_by(message=query)).scalars()
     
     def add_user(self, username, password) -> None:
-        user = User(username=username, password=password)
+        hash, salt = hash_password(password)
+        user = User(username=username, password=hash, salt=salt)
         db.session.add(user)
         db.session.commit()
-
 
     def post_message(self, authenticated_user: User, content, recipient_ids) -> None:
         msg = Message(
