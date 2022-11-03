@@ -4,8 +4,9 @@ from database import db
 from utils import hash_password
 
 class DataHandler():
-    def get_messages(self) -> List[Message]:
-        return Message.query.all()
+    def get_messages(self, authenticated_user: User) -> List[Message]:
+        result = authenticated_user.received_messages
+        return result
 
     def get_users(self) -> List[User]:
         return User.query.all()
@@ -26,7 +27,7 @@ class DataHandler():
         msg = Message(
             sender=authenticated_user.id,
             content=content,
-            recipient_ids=recipient_ids
+            recipients=recipient_ids
         )
         db.session.add(msg)
         db.session.commit()

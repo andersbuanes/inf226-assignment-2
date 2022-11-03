@@ -2,7 +2,6 @@ from database import db
 from sqlalchemy import Column, Integer, String
 
 class User(db.Model):
-    __bind_key__ = 'auth'
     __tablename__ = 'user'
     
     id = Column(Integer, primary_key=True)
@@ -13,32 +12,36 @@ class User(db.Model):
     def __repr__(self):
         return "<User %r>" % self.username
     
-#message_reciepent = db.Table('message_recipent',
-                    #db.Column('message_id', db.Integer, db.ForeignKey('message.id')),
-                    #db.Column('user_id', db.Integer, db.ForeignKey(User.id))
-                    #)
+    def get_messages(self):
+        return self.received_messages
 
-class MessageUser(db.Model):
-    __bind_key__ = 'content'
-    __tablename__ = 'user'
+    def to_dict(self):
+        return {
+                'username': self.username,
+                'id': self.id,
+                }
     
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    
-    def __repr__(self):
-        return "<MessageUser %r>" % self.username
+message_reciepent = db.Table('recipients',
+                    db.Column('message_id', db.Integer, db.ForeignKey('message.id')),
+                    db.Column('user_id', db.Integer, db.ForeignKey(User.id)),
+                    )
 
 class Message(db.Model):
-    __bind_key__ = 'content'
-    __tablename__ = 'messages'
+    __tablename__ = 'message'
 
     id = db.Column(db.Integer, primary_key=True)
     sender = db.Column(db.String(80), nullable=False)
     content = db.Column(db.String(500), nullable=False)
-    #recipients_id = db.Column(db.Integer, ForeignKey(User.id))
-    #recipients = db.relationship(User)
-    #recipients = db.relationship(User, secondary=message_reciepent, backref='recieved_messages')
+    recipients = db.relationship(User, secondary='recipients', backref='received_messages')
+    
+    def to_dict(self):
+        a = {
+            "id": self.id,
+            "sender": self.sender,
+            "content": self.content,
+            "recipients": [r.to_dict() for r in self.recipients],
+        }
+        return a
 
     def __repr__(self):
-        return f"<Message sent by {self.sender} recived by [{self.recipients}] {self.content}>"
-
+        return f"<Message sent by {self.sender} content: '{self.content}'>"
