@@ -146,6 +146,9 @@ def get_message(id):
         schema = MessageWebSchema()
         user = data_handler.get_user(current_user.get_id())
         message = data_handler.get_message(id, user)
+        if message == None:
+            return abort(404)
+
         print(message)
         mapped_message = schema.dump(message)
         return mapped_message
