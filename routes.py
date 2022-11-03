@@ -139,6 +139,22 @@ def get_messages():
     except Error as e:
         return f'ERROR: {e}'
 
+@routes.get('/message/<id>')
+@login_required
+def get_message(id):
+    try: 
+        schema = MessageWebSchema()
+        user = data_handler.get_user(current_user.get_id())
+        message = data_handler.get_message(id, user)
+        print(message)
+        mapped_message = schema.dump(message)
+        return mapped_message
+    except Error as e:
+        return f'ERROR: {e}'
+        
+    
+    
+
 # Send route
 @routes.post('/send')
 @login_required
