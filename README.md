@@ -1,24 +1,36 @@
 # Evaluation
+The initial application was badly structure. A badly structured project can increase the possibility of bugs which in turn can have impacts on the security of the application.
 
 ## Design
-### Application Factory
-Moving the creation of our application object lets us create multiple instances of the app later. There are multiple benefits to this, for example:
+To improve security we decided on restructuring the project.
 
-- Testing the application with different settings
-- Run different versions of the application
+## Security issues
 
-### User model
-UserMixin exposes methods such as *is_authenticated()*, *is_active()* and *get_id()*, making our life easier :)
+- Secret key is not random and stored directly in code -> easier to find session cookies, session hijacking
+
+- Users stored directly in source code
+
+- String concatenation for SQL statements -> SQLi
+
+- Some routes are not protected (send, search) -> access control / authorization (?)
+
+- *next* parameter -> csrf
+
+- private messages are not private -> access control / authorization (?)
+
+- No authentication
+
+- Input is not validated
+
+- innerHtml is sketchy
+
+- No application logger -> traceability
 
 ### Protect pages
-*Send*- and *Search*-route is not protected. We should require login to query for data. Solution: Add *@login_required* to these paths. Protecting pages ensures that only people with access are allowed to make requests.
+*Send*- and *Search*-route is not protected. We should require login to access or modify data. Solution: Add *@login_required* to these paths. Protecting pages ensures that only people with access are allowed to make requests.
 
 ### Prepared Statements
-The application is vulnerable to SQL injection.
-
-### 
+The application is vulnerable to SQL injection. Using prepared statements ...
 
 
-
-
-- Session protection = "strong" secures 
+- Session protection = "strong" secures ...
