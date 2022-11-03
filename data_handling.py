@@ -1,5 +1,5 @@
 from typing import List
-from models import Message, MessageUser, User
+from models import Message, User
 from database import db
 
 class DataHandler():

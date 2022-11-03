@@ -1,14 +1,14 @@
 from database import db
-from sqlalchemy import ForeignKey
 from flask_login import UserMixin
+from sqlalchemy import Column, Integer, String, ForeignKey
 
-class User(UserMixin, db.Model):
+class User(db.Model):
     __bind_key__ = 'auth'
     __tablename__ = 'user'
     
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(300), unique=True, nullable=False)
+    id = Column(Integer, primary_key=True)
+    username = Column(String(80), unique=True, nullable=False)
+    password = Column(String(300), unique=True, nullable=False)
     
     def __repr__(self):
         return "<User %r>" % self.username
@@ -27,7 +27,7 @@ class MessageUser(db.Model):
     
     def __repr__(self):
         return "<MessageUser %r>" % self.username
-    
+
 class Message(db.Model):
     __bind_key__ = 'content'
     __tablename__ = 'messages'
