@@ -1,5 +1,3 @@
-from http import HTTPStatus
-from sqlite3 import DataError, DatabaseError, IntegrityError, InterfaceError
 from apsw import Error
 from flask import (
     abort,
@@ -16,20 +14,16 @@ from flask import (
 import flask
 import bcrypt
 
-from werkzeug.datastructures import WWWAuthenticate
-from werkzeug.routing import BuildError
-
 from flask_login import (
     login_user,
     logout_user,
     login_required,
 )
 from auth_handling import AuthHandler
-
-from login_form import LoginForm
 from data_handling import DataHandler
-from models import User
+from login_form import LoginForm
 from register_form import RegisterForm
+from models import User
 from utils import is_safe_url, cssData, pygmentize
 from login_manager import user_loader
 
@@ -62,7 +56,7 @@ def hash_password(password):
 def check_password_hash(stored_password_hash: str, inputed_password: str):
     return stored_password_hash == hash_password(inputed_password)
 
-@routes.route('/register', methods=['POST'])
+@routes.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if form.is_submitted():
@@ -79,7 +73,7 @@ def register():
         auth_handler.create_user(username, password)
                 
         return redirect(url_for('routes.login'))
-    return render_template('register.html')
+    return render_template('register.html', form=form)
 
 # Login route
 @routes.route('/login', methods=['GET', 'POST'])
