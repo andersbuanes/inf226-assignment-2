@@ -1,22 +1,31 @@
-from models import Announcement, Message
-from app import db
+from typing import List
+from models import Message, MessageUser, User
+from database import db
 
 class DataHandler():
-    def get_messages(self):
+    def get_messages(self) -> List[Message]:
         #return db.session.query(db.select(Message)).all()
         return Message.query.all()
 
-    def get_search(self, query):
+    def get_users(self) -> List[User]:
+        return User.query.all()
+    
+
+    def get_search(self, query) -> List[Message]:
         return db.session.execute(db.select(Message).filter_by(message=query)).scalars()
+    
+    def add_user(self, username, password) -> None:
+        user = User(username=username, password=password)
+        db.session.add(user)
+        db.session.commit()
 
-    def get_announcments(self):
-        return db.session.execute(db.select(Announcement)).scalars()
 
-    def post_simple_message(self, sender, message):
-        message = Message(
-            sender=sender,
-            message=message,
+    def post_message(self, authenticated_user: User, content, recipient_ids) -> None:
+        msg = Message(
+            sender=authenticated_user.id,
+            content=content,
+            recipient_ids=recipient_ids
         )
-        db.session.add(message)
+        db.session.add(msg)
         db.session.commit()
 

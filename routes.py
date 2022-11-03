@@ -108,37 +108,35 @@ def logout():
 @login_required
 def search():
     query = request.args.get('q') or request.form.get('q') or '*'
-    m =  dataHandler.get_messages()
+    m =  dataHandler.get_search(query)
     return [to_dict(a) for a in m]
     #return dataHandler.get_search(query)
 
+from web_models import UserWebSchema
+@routes.get('/user')
+def get_user():
+    users =  dataHandler.get_users()
+    schema = UserWebSchema(many=True)
+    result = schema.dumps(users)
+    return result
+
 # Send route
-@routes.route('/send', methods=['POST','GET'])
+@routes.post('/send')
 @login_required
 def send():
     try:
+        users =  dataHandler.get_users()
+        print(users)
         sender = request.args.get('sender') or request.form.get('sender')
         message = request.args.get('message') or request.args.get('message')
         if not sender or not message:
             return f'ERROR: missing sender or message'
 
-        dataHandler.post_simple_message(sender, message)
+        dataHandler.post_message(users[1], message, recipient_ids=[1,2])
 
         return f'ok'
     except Error as e:
         return f'ERROR: {e}'
-
-@routes.get('/announcements')
-def announcements():
-    return dataHandler.get_announcments()
-
-@routes.get('/coffee/')
-def nocoffee():
-    abort(418)
-
-@routes.route('/coffee/', methods=['POST','PUT'])
-def gotcoffee():
-    return "Thanks!"
 
 @routes.get('/highlight.css')
 def highlightStyle():

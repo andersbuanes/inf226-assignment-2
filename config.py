@@ -1,6 +1,6 @@
-SQLALCHEMY_DATABASE_URI = ''
+SQLALCHEMY_DATABASE_URI = 'sqlite:///tiny.db'
 
 SQLALCHEMY_BINDS = {
-    'auth': '',
-    'content': '',
+    'content': 'sqlite:///content.db',
+    'auth': 'sqlite:///auth.db',
 }
