@@ -76,7 +76,6 @@ def login():
         password = form.password.data
         
         u = data_handler.get_user(username)
-        print(u)
         
         if u and check_password_hash(u.password, password, u.salt):
             user = user_loader(username)

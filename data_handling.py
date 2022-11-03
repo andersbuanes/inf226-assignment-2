@@ -5,7 +5,6 @@ from utils import hash_password
 
 class DataHandler():
     def get_messages(self) -> List[Message]:
-        #return db.session.query(db.select(Message)).all()
         return Message.query.all()
 
     def get_users(self) -> List[User]:
