@@ -116,10 +116,10 @@
 		var getMessages = async () => {
 			res = await fetch('/message');
 			messages = await res.json();
-			output.setHtml('');
+			output.setHTML('');
 			messages.forEach(m => {
 				const body = document.createElement('div');
-				body.setHtml(`[${m.recipients}]: ${m.content}`);
+				body.setHTML(`[${m.sender}]: ${m.content}`);
 				output.appendChild(body);
 			})
 		}
@@ -132,7 +132,7 @@
         head.textContent = `[${id}]  ${q} → ${res.status} ${res.statusText}`;
         output.appendChild(head);
         const body = document.createElement('p');
-        body.setHtml(await res.text());
+        body.setHTML(await res.text());
         output.appendChild(body);
         body.scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
         anchor.scrollIntoView();
