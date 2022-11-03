@@ -14,6 +14,12 @@ class User(db.Model):
     
     def get_messages(self):
         return self.received_messages
+
+    def to_dict(self):
+        return {
+                'username': self.username,
+                'id': self.id,
+                }
     
 message_reciepent = db.Table('recipients',
                     db.Column('message_id', db.Integer, db.ForeignKey('message.id')),
@@ -27,6 +33,17 @@ class Message(db.Model):
     sender = db.Column(db.String(80), nullable=False)
     content = db.Column(db.String(500), nullable=False)
     recipients = db.relationship(User, secondary='recipients', backref='received_messages')
+    
+    def to_dict(self):
+        print(self.sender)
+        a = {
+            "id": self.id,
+            "sender": self.sender,
+            "content": self.content,
+            "recipients": [r.to_dict() for r in self.recipients],
+        }
+        print(a)
+        return a
 
     def __repr__(self):
         return f"<Message sent by {self.sender} content: '{self.content}'>"

@@ -18,6 +18,7 @@ from flask_login import (
     login_user,
     logout_user,
     login_required,
+    current_user,
 )
 from data_handling import DataHandler
 from login_form import LoginForm
@@ -114,7 +115,7 @@ def search():
     m =  data_handler.get_search(query)
     return [to_dict(a) for a in m]
 
-from web_models import UserWebSchema
+from web_models import MessageWebSchema, UserWebSchema
 @routes.get('/user')
 def get_user():
     users =  data_handler.get_users()
@@ -122,11 +123,27 @@ def get_user():
     result = schema.dumps(users)
     return result
 
+# Get user messages
+@routes.get('/message')
+@login_required
+def get_message():
+    try: 
+        schema = MessageWebSchema()
+        users =  data_handler.get_users()
+
+        messages = data_handler.get_messages(users[0])
+        mapped_result = [schema.dump(a.to_dict()) for a in messages]
+
+        return mapped_result
+    except Error as e:
+        return f'ERROR: {e}'
+
 # Send route
 @routes.post('/send')
 @login_required
 def send():
     try:
+        user =  data_handler.get_user(current_user.get_id())
         users =  data_handler.get_users()
         print(users)
         sender = request.args.get('sender') or request.form.get('sender')
@@ -134,7 +151,7 @@ def send():
         if not sender or not message:
             return f'ERROR: missing sender or message'
 
-        data_handler.post_message(users[1], message, recipient_ids=[1,2])
+        data_handler.post_message(user, message, recipient_ids=[users[0]])
 
         return f'ok'
     except Error as e:
