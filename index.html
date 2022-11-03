@@ -116,10 +116,10 @@
 		var getMessages = async () => {
 			res = await fetch('/message');
 			messages = await res.json();
-			output.innerHTML = ''
+			output.setHtml('');
 			messages.forEach(m => {
 				const body = document.createElement('div');
-				body.innerHTML = `[${m.sender}]: ${m.content}`;
+				body.setHtml(`[${m.sender}]: ${m.content}`);
 				output.appendChild(body);
 			})
 		}
@@ -142,15 +142,6 @@
         const q = `/send?sender=${encodeURIComponent(sender)}&message=${encodeURIComponent(message)}`;
         res = await fetch(q, { method: 'post' });
 				getMessages();
-        console.log(res);
-        //const head = document.createElement('h3');
-        //head.textContent = `[${id}]  ${q} → ${res.status} ${res.statusText}`;
-        //output.appendChild(head);
-        //const body = document.createElement('p');
-        //body.innerHTML = await res.text();
-        //output.appendChild(body);
-        //body.scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
-        //anchor.scrollIntoView();
     };
 
     searchField.addEventListener('keydown', ev => {
