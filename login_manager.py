@@ -4,15 +4,10 @@ from http import HTTPStatus
 from flask import abort
 from base64 import b64decode
 from data_handling import DataHandler
+from utils import check_password_hash
 
 data_handler = DataHandler()
 login_manager = LoginManager()
-
-
-# Add a login manager to the app
-users = {'alice' : {'password' : 'password123', 'token' : 'tiktok'},
-         'bob' : {'password' : 'bananas'}
-         }
 
 # Class to store user info
 # UserMixin provides us with an `id` field and the necessary
@@ -55,8 +50,8 @@ def request_loader(request) -> User or None:
     if auth_scheme == 'basic':  # Basic auth has username:password in base64
         (uid,passwd) = b64decode(auth_params.encode(errors='ignore')).decode(errors='ignore').split(':', maxsplit=1)
         print(f'Basic auth: {uid}:{passwd}')
-        u = users.get(uid)
-        if u: # and check_password(u.password, passwd):
+        u = data_handler.get_user(uid)
+        if u and check_password_hash(u.password, passwd):
             return user_loader(uid)
     elif auth_scheme == 'bearer': # Bearer auth contains an access token;
         # an 'access token' is a unique string that both identifies
@@ -64,8 +59,8 @@ def request_loader(request) -> User or None:
         # you encode it in the token – see JWT (JSON Web Token), which
         # encodes credentials and (possibly) authorization info)
         print(f'Bearer auth: {auth_params}')
-        for uid in users:
-            if users[uid].get('token') == auth_params:
+        for user in data_handler.get_users():
+            if user.get('token') == auth_params:
                 return user_loader(uid)
     # For other authentication schemes, see
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication

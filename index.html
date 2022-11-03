@@ -132,7 +132,7 @@
         head.textContent = `[${id}]  ${q} → ${res.status} ${res.statusText}`;
         output.appendChild(head);
         const body = document.createElement('p');
-        body.innerHTML = await res.text();
+        body.setHtml(await res.text());
         output.appendChild(body);
         body.scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
         anchor.scrollIntoView();
