@@ -133,7 +133,6 @@ def get_messages():
 
         messages = data_handler.get_messages(user)
         messages = [a.to_dict() for a in messages]
-        print(messages)
         mapped_result = [schema.dump(a) for a in messages]
 
         return mapped_result
@@ -144,14 +143,18 @@ def get_messages():
 @routes.post('/send')
 @login_required
 def send():
+    if request.json == None:
+        return 'Error'
+
     try:
         user =  data_handler.get_user(current_user.get_id())
         users =  data_handler.get_users()
-        recipients = request.args.get('recipients') or request.form.get('recipients')
-        recipient_names = recipients.split(", ")
+        recipients = request.json['recipients']
+        recipient_names = recipients
+
         recipient_ids = [user for user in users if user.username in recipient_names]
                 
-        message = request.args.get('message') or request.args.get('message')
+        message = request.json['message']
         if not recipient_ids or not message:
             return f'ERROR: missing recipients or message'
 
