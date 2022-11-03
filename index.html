@@ -114,23 +114,23 @@
     var header = document.getElementById('header');
 
     var checkAnnouncements = async () => {
-        res = await fetch('/announcements');
-        anns = await res.json();
-        if (anns && Array.isArray(anns.data)) {
-            const elts = [];
-            anns.data.forEach((element, idx) => {
-                if (idx > 0) {
-                    const node = document.createElement('li');
-                    node.textContent = '  …  ';
-                    elts.push(node);
-                }
-                const node = document.createElement('li');
-                node.textContent = `${element.message || ''}`;
-                elts.push(node);
-            });
-            console.log(elts);
-            header.replaceChildren(...elts);
-        }
+        //res = await fetch('/announcements');
+        //anns = await res.json();
+        //if (anns && Array.isArray(anns.data)) {
+            //const elts = [];
+            //anns.data.forEach((element, idx) => {
+                //if (idx > 0) {
+                    //const node = document.createElement('li');
+                    //node.textContent = '  …  ';
+                    //elts.push(node);
+                //}
+                //const node = document.createElement('li');
+                //node.textContent = `${element.message || ''}`;
+                //elts.push(node);
+            //});
+            //console.log(elts);
+            //header.replaceChildren(...elts);
+        //}
     };
     var search = async (query) => {
         const id = reqId++;
