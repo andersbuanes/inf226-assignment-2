@@ -8,6 +8,9 @@ from routes import routes
 
 def create_app():
     app = Flask(__name__)
+    app.config.update(
+        SECRET_KEY="Muh sektrix"
+    )
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///tiny.db"
     db.init_app(app)
     app.register_blueprint(routes)
