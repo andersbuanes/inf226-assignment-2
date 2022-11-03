@@ -149,7 +149,7 @@ def send():
         users =  data_handler.get_users()
         recipients = request.args.get('recipients') or request.form.get('recipients')
         recipient_names = recipients.split(", ")
-        recipient_ids = [user for user in users if str.lower(user.username) in map(str.lower, recipient_names)]
+        recipient_ids = [user for user in users if user.username in recipient_names]
                 
         message = request.args.get('message') or request.args.get('message')
         if not recipient_ids or not message:
