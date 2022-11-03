@@ -141,15 +141,16 @@
         const id = reqId++;
         const q = `/send?sender=${encodeURIComponent(sender)}&message=${encodeURIComponent(message)}`;
         res = await fetch(q, { method: 'post' });
+				getMessages();
         console.log(res);
-        const head = document.createElement('h3');
-        head.textContent = `[${id}]  ${q} → ${res.status} ${res.statusText}`;
-        output.appendChild(head);
-        const body = document.createElement('p');
-        body.innerHTML = await res.text();
-        output.appendChild(body);
-        body.scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
-        anchor.scrollIntoView();
+        //const head = document.createElement('h3');
+        //head.textContent = `[${id}]  ${q} → ${res.status} ${res.statusText}`;
+        //output.appendChild(head);
+        //const body = document.createElement('p');
+        //body.innerHTML = await res.text();
+        //output.appendChild(body);
+        //body.scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
+        //anchor.scrollIntoView();
     };
 
     searchField.addEventListener('keydown', ev => {

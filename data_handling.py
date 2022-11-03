@@ -1,11 +1,15 @@
 from typing import List
+from datetime import datetime
+
+
 from models import Message, User
 from database import db
 from utils import hash_password
 
 class DataHandler():
     def get_messages(self, authenticated_user: User) -> List[Message]:
-        result = authenticated_user.received_messages
+        result = authenticated_user.received_messages + authenticated_user.send_messages
+        result.sort(key=lambda x: x.timestamp)
         return result
 
     def get_users(self) -> List[User]:
@@ -25,9 +29,10 @@ class DataHandler():
 
     def post_message(self, authenticated_user: User, content, recipient_ids) -> None:
         msg = Message(
-            sender=authenticated_user.id,
+            sender_id=authenticated_user.id,
             content=content,
-            recipients=recipient_ids
+            recipients=recipient_ids,
+            timestamp=datetime.now().timestamp(),
         )
         db.session.add(msg)
         db.session.commit()

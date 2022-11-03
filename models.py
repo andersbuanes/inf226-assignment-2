@@ -8,6 +8,7 @@ class User(db.Model):
     username = Column(String(80), unique=True, nullable=False)
     password = Column(String(300), unique=True, nullable=False)
     salt = Column(String(300), unique=True, nullable=False)
+    send_messages = db.relationship("Message", back_populates="sender")
     
     def __repr__(self):
         return "<User %r>" % self.username
@@ -30,15 +31,18 @@ class Message(db.Model):
     __tablename__ = 'message'
 
     id = db.Column(db.Integer, primary_key=True)
-    sender = db.Column(db.String(80), nullable=False)
+    sender_id = Column(Integer, db.ForeignKey(User.id))
+    sender = db.relationship(User, back_populates="send_messages")
     content = db.Column(db.String(500), nullable=False)
+    timestamp = db.Column(db.String(20), nullable=False)
     recipients = db.relationship(User, secondary='recipients', backref='received_messages')
     
     def to_dict(self):
         a = {
             "id": self.id,
-            "sender": self.sender,
+            "sender": self.sender.username,
             "content": self.content,
+            "time": self.timestamp,
             "recipients": [r.to_dict() for r in self.recipients],
         }
         return a

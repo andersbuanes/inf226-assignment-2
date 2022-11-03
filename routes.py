@@ -130,9 +130,13 @@ def get_message():
     try: 
         schema = MessageWebSchema()
         user =  data_handler.get_user(current_user.get_id())
+        users =  data_handler.get_users()
+
 
         messages = data_handler.get_messages(user)
-        mapped_result = [schema.dump(a.to_dict()) for a in messages]
+        messages = [a.to_dict() for a in messages]
+        print(messages)
+        mapped_result = [schema.dump(a) for a in messages]
 
         return mapped_result
     except Error as e:

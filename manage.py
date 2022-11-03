@@ -22,7 +22,7 @@ def deploy():
     dh.add_user('bob', '12345678')
     u = dh.get_users()
     dh.post_message(authenticated_user=u[0], content="hei", recipient_ids=u)
-    dh.post_message(authenticated_user=u[0], content="hoi", recipient_ids=[u[0]])
+    dh.post_message(authenticated_user=u[1], content="hei fra bob", recipient_ids=u)
 
     msgs = dh.get_messages(u[1])
     print(msgs)
