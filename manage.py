@@ -1,4 +1,5 @@
 from flask_migrate import Migrate
+import logging
 from data_handling import DataHandler
 
 def deploy():
@@ -26,5 +27,6 @@ def deploy():
 
     msgs = dh.get_messages(u[1])
     print(msgs)
+    logging.debug('Application started.')
     
 deploy()

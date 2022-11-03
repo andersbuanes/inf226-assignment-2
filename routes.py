@@ -1,18 +1,15 @@
 from apsw import Error
 from flask import (
-    abort,
     render_template,
     redirect,
-    flash,
     url_for,
     send_from_directory,
     request,
-    session,
     make_response,
     Blueprint
 )
 import flask
-import bcrypt
+import logging
 
 from flask_login import (
     login_user,
@@ -23,7 +20,6 @@ from flask_login import (
 from data_handling import DataHandler
 from login_form import LoginForm
 from register_form import RegisterForm
-from models import User
 from utils import check_password_hash, is_safe_url, cssData, pygmentize
 from login_manager import user_loader
 
@@ -50,8 +46,8 @@ def index_html():
 def register():
     form = RegisterForm()
     if form.is_submitted():
-        print(f'Received form: {"invalid" if not form.validate() else "valid"} {form.form_errors} {form.errors}')
-        print(request.form)
+        logging.info(f'Received form: {"invalid" if not form.validate() else "valid"} {form.form_errors} {form.errors}')
+        logging.debug(request.form)
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -61,17 +57,17 @@ def register():
         if user:
             return redirect(url_for('routes.register'))
         data_handler.add_user(username, password)
+        logging.info('User %s registered.' %username)
                 
         return redirect(url_for('routes.login'))
     return render_template('register.html', form=form)
 
-# Login route
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.is_submitted():
-        print(f'Received form: {"invalid" if not form.validate() else "valid"} {form.form_errors} {form.errors}')
-        print(request.form)
+        logging.info(f'Received form: {"invalid" if not form.validate() else "valid"} {form.form_errors} {form.errors}')
+        logging.debug(request.form)
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -84,6 +80,7 @@ def login():
             login_user(user)
 
             flask.flash('Logged in successfully.')
+            logging.info('User %s logged in.' % user.get_id())
 
             next = flask.request.args.get('next')
 
@@ -104,7 +101,9 @@ def to_dict(o):
 @routes.route("/logout")
 @login_required
 def logout():
+    uid = current_user.get_id()
     logout_user()
+    logging.info('User %s logged out' % uid)
     return flask.redirect('/')
 
 @routes.get('/search')
@@ -112,6 +111,7 @@ def logout():
 def search():
     query = request.args.get('q') or request.form.get('q') or '*'
     m =  data_handler.get_search(query)
+    logging.info('Search for query %s' % query)
     return [to_dict(a) for a in m]
 
 from web_models import MessageWebSchema, UserWebSchema
@@ -138,7 +138,7 @@ def get_messages():
 
         return mapped_result
     except Error as e:
-        return f'ERROR: {e}'
+        logging.warning('get_messages fail - %s' % e)
 
 @routes.get('/message/<id>')
 @login_required
@@ -147,11 +147,10 @@ def get_message(id):
         schema = MessageWebSchema()
         user = data_handler.get_user(current_user.get_id())
         message = data_handler.get_message(id, user)
-        print(message)
         mapped_message = schema.dump(message)
         return mapped_message
     except Error as e:
-        return f'ERROR: {e}'
+        logging.warning('get_message fail - %s' % e)
         
     
     
@@ -171,12 +170,12 @@ def send():
         
         if not recipient_ids or not message:
             return f'ERROR: missing recipients or message'
-
+        
         data_handler.post_message(user, message, recipient_ids)
-
+        
         return f'ok'
     except Error as e:
-        return f'ERROR: {e}'
+        logging.warning('send fail - %s' % e)
 
 @routes.get('/highlight.css')
 def highlightStyle():

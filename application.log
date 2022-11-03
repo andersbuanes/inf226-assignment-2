@@ -1,0 +1,23 @@
+2022-11-04 00:07:36,518 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2022-11-04 00:07:36,518 INFO [33mPress CTRL+C to quit[0m
+2022-11-04 00:07:41,154 INFO 127.0.0.1 - - [04/Nov/2022 00:07:41] "GET /login HTTP/1.1" 200 -
+2022-11-04 00:07:41,390 INFO 127.0.0.1 - - [04/Nov/2022 00:07:41] "GET /highlight.css HTTP/1.1" 200 -
+2022-11-04 00:07:41,485 INFO 127.0.0.1 - - [04/Nov/2022 00:07:41] "[36mGET /favicon.png HTTP/1.1[0m" 304 -
+2022-11-04 00:07:46,959 INFO Received form: valid [] {}
+2022-11-04 00:07:46,959 DEBUG ImmutableMultiDict([('csrf_token', 'ImJiYmNiODViYjYwNDI0YWQ3MzE5ZGI2YjhiNjUxMzhiYjUwNTM4YmQi.Y2RJvQ.D4xLxXGOPosPgQPLC3BWpPvFGH0'), ('username', 'alice'), ('password', 'testtest')])
+2022-11-04 00:07:47,165 INFO User alice logged in.
+2022-11-04 00:07:47,165 INFO 127.0.0.1 - - [04/Nov/2022 00:07:47] "[32mPOST /login HTTP/1.1[0m" 302 -
+2022-11-04 00:07:47,485 INFO 127.0.0.1 - - [04/Nov/2022 00:07:47] "GET / HTTP/1.1" 200 -
+2022-11-04 00:07:47,749 INFO 127.0.0.1 - - [04/Nov/2022 00:07:47] "GET /highlight.css HTTP/1.1" 200 -
+2022-11-04 00:07:47,825 INFO 127.0.0.1 - - [04/Nov/2022 00:07:47] "GET /message HTTP/1.1" 200 -
+2022-11-04 00:07:48,062 INFO 127.0.0.1 - - [04/Nov/2022 00:07:48] "[36mGET /favicon.png HTTP/1.1[0m" 304 -
+2022-11-04 00:07:53,055 INFO 127.0.0.1 - - [04/Nov/2022 00:07:53] "GET /message HTTP/1.1" 200 -
+2022-11-04 00:07:58,355 INFO 127.0.0.1 - - [04/Nov/2022 00:07:58] "GET /message HTTP/1.1" 200 -
+2022-11-04 00:08:03,041 INFO 127.0.0.1 - - [04/Nov/2022 00:08:03] "GET /message HTTP/1.1" 200 -
+2022-11-04 00:08:08,080 INFO 127.0.0.1 - - [04/Nov/2022 00:08:08] "GET /message HTTP/1.1" 200 -
+2022-11-04 00:08:11,786 INFO User alice logged out
+2022-11-04 00:08:11,787 INFO 127.0.0.1 - - [04/Nov/2022 00:08:11] "[32mGET /logout HTTP/1.1[0m" 302 -
+2022-11-04 00:08:12,113 INFO 127.0.0.1 - - [04/Nov/2022 00:08:12] "[32mGET / HTTP/1.1[0m" 302 -
+2022-11-04 00:08:12,380 INFO 127.0.0.1 - - [04/Nov/2022 00:08:12] "GET /login?next=%2F HTTP/1.1" 200 -
+2022-11-04 00:08:12,441 INFO 127.0.0.1 - - [04/Nov/2022 00:08:12] "GET /highlight.css HTTP/1.1" 200 -

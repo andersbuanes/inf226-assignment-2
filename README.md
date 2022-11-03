@@ -30,6 +30,7 @@ Test the application by using one of the test users:
 
 or register a new user.
 
+To run multiple instances of the application clear the browser cache or open a new browser. Start the application with <code>flask run --port 5001</code>. Any port can be used except from port 5000.
 
 
 ## Questions
@@ -65,7 +66,7 @@ or register a new user.
 + Spoofing
     - The secret key was not secured, nor random. Easy for an attacker to hijack session.
     - There was no validation of passwords. As long as an attacker knew a username they could "log in".
-    - Lack of protection against Cross-site Request Forgery.
+    - Lack of protection against CSRF.
 
 ### What damage could be done?
 Firstly, in terms of confidationality there were two main issues:
@@ -73,7 +74,7 @@ Firstly, in terms of confidationality there were two main issues:
 - Accessing user passwords
 
 Secondly, in terms of integrity there were also two issues:
-- Spoofing
+- Possibility of session hijacking as secret was not secured
 - CSRF
 
 Lastly, in terms of availability there were three issues:
