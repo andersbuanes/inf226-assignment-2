@@ -125,12 +125,11 @@ def get_user():
 # Get user messages
 @routes.get('/message')
 @login_required
-def get_message():
+def get_messages():
     try: 
         schema = MessageWebSchema()
         user =  data_handler.get_user(current_user.get_id())
         users =  data_handler.get_users()
-
 
         messages = data_handler.get_messages(user)
         messages = [a.to_dict() for a in messages]
@@ -148,12 +147,15 @@ def send():
     try:
         user =  data_handler.get_user(current_user.get_id())
         users =  data_handler.get_users()
-        sender = request.args.get('sender') or request.form.get('sender')
+        recipients = request.args.get('recipients') or request.form.get('recipients')
+        recipient_names = recipients.split(", ")
+        recipient_ids = [user for user in users if str.lower(user.username) in map(str.lower, recipient_names)]
+                
         message = request.args.get('message') or request.args.get('message')
-        if not sender or not message:
-            return f'ERROR: missing sender or message'
+        if not recipient_ids or not message:
+            return f'ERROR: missing recipients or message'
 
-        data_handler.post_message(user, message, recipient_ids=[users[0]])
+        data_handler.post_message(user, message, recipient_ids)
 
         return f'ok'
     except Error as e:
