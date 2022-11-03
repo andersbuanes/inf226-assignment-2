@@ -35,14 +35,12 @@ class Message(db.Model):
     recipients = db.relationship(User, secondary='recipients', backref='received_messages')
     
     def to_dict(self):
-        print(self.sender)
         a = {
             "id": self.id,
             "sender": self.sender,
             "content": self.content,
             "recipients": [r.to_dict() for r in self.recipients],
         }
-        print(a)
         return a
 
     def __repr__(self):
