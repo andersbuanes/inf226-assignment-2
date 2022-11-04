@@ -9,7 +9,7 @@ To improve security we decided on restructuring the project. We wanted a clear s
 - <code>config.py</code> - application configuration
 - <code>data_handling.py</code> - contains all methods for accessing the database
 - <code>database.py</code> - exposes the database for use in different parts of the application
-- <code>manage.py</code> - runs the application
+- <code>manage.py</code> - initializes the application
 - <code>models.py</code> - contains the data transfer objects
 - <code>web_models.py</code> - contains objects used for when data is being exposed to the client
 
@@ -19,6 +19,7 @@ To improve security we decided on restructuring the project. We wanted a clear s
 ### How to run
 - Run <code>python manage.py</code> to ensure databases are set up and updated to most recent migration
 - Start the application with <code>flask run</code>
+- The application is now available at <code>localhost:5000</code>
 
 Test the application by using one of the test users:
 1. Alice
@@ -26,7 +27,7 @@ Test the application by using one of the test users:
     - Password: <code>testtest</code>
 2. Bob
     - Username: <code>bob</code>
-    - Password: <code>password123</code>
+    - Password: <code>12345678</code>
 
 or register a new user.
 
@@ -36,17 +37,16 @@ To run multiple instances of the application clear the browser cache or open a n
 ## Questions
 ### Threat Model
 
-- Secret key is not random and stored directly in code
-    - Easier to find session cookies which enables session hijacking
-+ User data was stored directly in the source code. This increases the risk of an attacker obtaining sensitive information.
-- Data was stored in the database using string concatenation. This makes SQLi very likely.
-+ When searching for messages, data is added to the DOM using <code>innerHtml</code>. <code>innerHtml</code> is unsafe and if the data is not escaped it exposes the application to XSS attacks.
-- Most routes are not protected meaning login is not required to access pages. This allows attackers to obtain information they should not have access to.
-+ Using URL parameter to redirect
+- Secret key is not random and stored directly in code. This makes it easier for an attacker to find session cookies and hijack a session.
+- User data was stored directly in the source code. This increases the risk of an attacker obtaining sensitive information.
+- Data was stored in the database using string concatenation which exposes the application to SQLi.
+- When searching for messages, data is added to the DOM using <code>innerHtml</code>. <code>innerHtml</code> is unsafe and if the data is not sanitized it exposes the application to XSS attacks.
+- Most routes are not protected meaning login is not required to access these pages. This allows attackers to obtain information they should not have access to.
+- Using URL parameter to redirect
     - Enables option for CSRF attacks
 - private messages are not private -> access control / authorization (?)
-+ No authentication
-- Input is not validated
+- No authentication is in place. Password is not checked on login.
+- Input is not validated.
 
 ### What can an attacker do?
 - Access information they are not authorized to see
@@ -78,8 +78,8 @@ Secondly, in terms of integrity there were also two issues:
 - CSRF
 
 Lastly, in terms of availability there were three issues:
-    - Deleting or manipulating data, either through SQLi or XSS
-    - DDOS attacks
+- Deleting or manipulating data, either through SQLi or XSS
+- DDOS attacks
 
 ## Attack Vectors
 The application had many attack vectors. Though some could be debated we formed this list for the application:
