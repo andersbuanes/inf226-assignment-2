@@ -18,7 +18,8 @@ To improve security we decided on restructuring the project. We wanted a clear s
 
 ### How to run
 - Run <code>python manage.py</code> to ensure databases are set up and updated to most recent migration
-- Start the application with <code>flask run</code>
+- Start the application with https <code>flask run --cert=adhoc</code>
+- Start the application with http(testing) <code>flask run</code>
 - The application is now available at <code>localhost:5000</code>
 
 Test the application by using one of the test users:
