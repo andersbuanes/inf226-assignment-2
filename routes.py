@@ -21,7 +21,7 @@ from flask_login import (
 from data_handling import DataHandler
 from login_form import LoginForm
 from register_form import RegisterForm
-from utils import check_password_hash, is_safe_url, cssData, pygmentize
+from utils import check_password_hash, is_safe_url, cssData
 from login_manager import user_loader
 
 data_handler = DataHandler()

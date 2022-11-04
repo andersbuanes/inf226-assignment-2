@@ -40,19 +40,22 @@ To run multiple instances of the application clear the browser cache or open a n
 - Secret key is not random and stored directly in code. This makes it easier for an attacker to find session cookies and hijack a session.
 - User data was stored directly in the source code. This increases the risk of an attacker obtaining sensitive information.
 - Data was stored in the database using string concatenation which exposes the application to SQLi.
-- When searching for messages, data is added to the DOM using <code>innerHtml</code>. <code>innerHtml</code> is unsafe and if the data is not sanitized it exposes the application to XSS attacks.
+- Messages is unencrypted in the database, meaning anyone with access could read all messages.
+- When messages are shown to the user, data is added to the DOM using <code>innerHtml</code>. <code>innerHtml</code> is unsafe and if the data is not escaped it exposes the application to XSS attacks.
 - Most routes are not protected meaning login is not required to access these pages. This allows attackers to obtain information they should not have access to.
-- Using URL parameter to redirect
+- Using URL parameter to redirect and post data
     - Enables option for CSRF attacks
-- private messages are not private -> access control / authorization (?)
-- No authentication is in place. Password is not checked on login.
+    - Vunreble to XSS, tricking logged in users to click on urls with malicious payloads
+- private messages are not private, making the confidentiality of the application low
+- No authentication is in place. Password is not checked on login. A user can send a message as anyone.
 - Input is not validated.
+- Data is sent over http, sending messages over the network unencrypted, making network sniffing possible to read private messages.
 
 ### What can an attacker do?
 - Access information they are not authorized to see
     - There was initially no authorization or access control in place
     - An attacker could access any information they would want
-    - An attacker could send any information they would want
+    - An attacker could send any information they would want as anyone
 
 + Obtain sensitive information
     - Passwords were stored in the source code
@@ -69,7 +72,7 @@ To run multiple instances of the application clear the browser cache or open a n
     - Lack of protection against CSRF.
 
 ### What damage could be done?
-Firstly, in terms of confidationality there were two main issues:
+Firstly, in terms of confidentiality there were two main issues:
 - Reading of private messages
 - Accessing user passwords
 
@@ -96,11 +99,11 @@ The application had many attack vectors. Though some could be debated we formed 
 - Insecure Design
 
 ## Control measures
-- To prevent session hijacking the secret key is now stored in an environment variable that is accessed through the configuration file. For testing purposes there has been made one configuration file for development and another for production. An alternative could also be to store it directly in the configuration file and keep this file stored securely.
+- To prevent session hijacking the secret key is now stored in an environment variable that is accessed through the configuration file. For testing purposes there has been made one configuration file for development and another for production. An alternative could also be to store it directly in the configuration file and keep this file stored securely or inject the secrets into the config file on deployment.
 - Sensitive information has been protected by hashing and salting passwords aswell as storing them in the database. Ideally this information would be stored in a separate database.
 - SQL injection attacks have been mitigated by using SQLAlchemys functionality. All user input is escaped before queries are made.
 - XSS attacks have been mitigated by replacing <code>innerHtml</code> with <code>setHTML</code> (or <code>setText</code> if browser doesn't support <code>setHTML</code>). <code>setHTML</code> sanitizes the data before adding it to the DOM.
-- To handle access control most methods have been made unavailable unless a user is logged in. Additionally, a user can no longer set who has sent a message. Also, a user can no longer access messages where they are not the sender or on the recipient list.
+- To handle access control most methods have been made unavailable unless a user is logged in. Additionally, a user can no longer set who has sent a message. Also, a user can no longer access messages where they are not the sender nor on the recipient list.
 - Authentication is now done by checking the provided password against the hashed password in the database. If the hash of the provided password doesn't match the user is denied access.
 - CSRF attacks have been mitigated by applying a CSRF token to all forms. Further, all forms are now validated by applying custom validators for each field. This includes minimum lengths for passwords, required inputs, checks for unwanted characters and more. If a form is invalid, the user will be redirected to page and no data is sent to the server.
 - Flask default <code>next</code>-parameter on redirect has been made obsolete. This is to prevent the user trying to redirect to unwanted URLs. Further the cookie settings has been set to require same-site origin for requests.
