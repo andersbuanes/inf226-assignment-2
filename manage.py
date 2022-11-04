@@ -18,6 +18,7 @@ def deploy():
     migrate()
     upgrade()
     
+    # For testing purposes -> Remove before production
     dh = DataHandler()
     dh.add_user('alice', "testtest")
     dh.add_user('bob', '12345678')
