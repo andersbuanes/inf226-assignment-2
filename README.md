@@ -110,6 +110,7 @@ The application had many attack vectors. Though some could be debated we formed 
 - Flask default <code>next</code>-parameter on redirect has been made obsolete. This is to prevent the user trying to redirect to unwanted URLs. Further the cookie settings has been set to require same-site origin for requests.
 - In addition to same-site, cookies have been set to be secure meaning they can only be transferred by HTTPS. To avoid being read by JavaScript they have also been given HttpOnly attribute.
 - To help with traceability in the case of an attack we have added logging to the application. Most logged events are either debug or info. We have tried to mark logged events with warning in places where we think the application could be exploited.
+- Switching to https encrypts the network traffic. Making it difficult to read/edit data in transport. 
 
 ## Access Control Model
 The access control implemented in the application is Relationship Based Access Control. User have access to protected resources based on what other users set. If a users A sets user B as recipient of a message, user B will get access to that resource while an arbitrary user does not have access.
