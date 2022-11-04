@@ -110,10 +110,15 @@ def logout():
 @routes.get('/search')
 @login_required
 def search():
+    schema = MessageWebSchema()
     query = request.args.get('q') or request.form.get('q') or '*'
-    m =  data_handler.get_search(query)
+    user =  data_handler.get_user(current_user.get_id())
+    messages =  data_handler.get_search(query, user)
+    messages = [to_dict(a) for a in messages]
+    mapped_messages = [schema.dump(a) for a in messages]
     logging.info('Search for query %s' % query)
-    return [to_dict(a) for a in m]
+    print(mapped_messages)
+    return mapped_messages
 
 from web_models import MessageWebSchema, UserWebSchema
 @routes.get('/user')

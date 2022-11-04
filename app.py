@@ -1,6 +1,6 @@
 from flask import Flask
-from config import Config
 
+from config import Config
 from database import db
 from login_manager import login_manager
 from routes import routes

@@ -201,16 +201,15 @@
         const id = reqId++;
         const q = `/search?q=${encodeURIComponent(query)}`;
         res = await fetch(q);
-        console.log(res);
-        const head = document.createElement('h3');
-        head.textContent = `[${id}]  ${q} → ${res.status} ${res.statusText}`;
-        output.appendChild(head);
-        const body = document.createElement('p');
-				setText(body, await res.text());
-        output.appendChild(body);
-        body.scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
-        anchor.scrollIntoView();
+        messages = await res.json()
+        setText(output, '')
+        messages.forEach(m => {
+            const body = document.createElement('div');
+            setText(body, `[${id}]  ${q} → ${m.sender}: ${m.content}`)
+            output.appendChild(body)
+        })
     };
+
     var send = async (message) => {
         const id = reqId++;
 				const selectedRecipients = users

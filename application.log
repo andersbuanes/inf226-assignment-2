@@ -1,32 +1,28 @@
-2022-11-04 09:53:51,107 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2022-11-04 10:40:33,850 INFO [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2022-11-04 09:53:51,107 INFO [33mPress CTRL+C to quit[0m
-2022-11-04 09:53:55,417 INFO 127.0.0.1 - - [04/Nov/2022 09:53:55] "GET /register HTTP/1.1" 200 -
-2022-11-04 09:53:55,678 INFO 127.0.0.1 - - [04/Nov/2022 09:53:55] "GET /highlight.css HTTP/1.1" 200 -
-2022-11-04 09:54:04,451 INFO Received form: invalid [] {'password': ['Password must include atleast one uppercase letter, one lowercase letter and a digit.']}
-2022-11-04 09:54:04,451 DEBUG ImmutableMultiDict([('csrf_token', 'IjJlYTQzMTg2NmEyMDE5Y2RhMTAxNDFiNjcwZjI4NTdlYWNjZjI0YmEi.Y2TTIw.zov3EmVJSM2-MCRPBsJU8KYzZwI'), ('username', 'anders'), ('password', 'andersbanders1'), ('cpassword', 'andersbanders1')])
-2022-11-04 09:54:04,452 INFO 127.0.0.1 - - [04/Nov/2022 09:54:04] "POST /register HTTP/1.1" 200 -
-2022-11-04 09:54:04,794 INFO 127.0.0.1 - - [04/Nov/2022 09:54:04] "GET /highlight.css HTTP/1.1" 200 -
-2022-11-04 09:54:12,195 INFO Received form: valid [] {}
-2022-11-04 09:54:12,195 DEBUG ImmutableMultiDict([('csrf_token', 'IjJlYTQzMTg2NmEyMDE5Y2RhMTAxNDFiNjcwZjI4NTdlYWNjZjI0YmEi.Y2TTLA.71dKuHh1DGxGp7kQxSaoDTcJgss'), ('username', 'anders'), ('password', 'Andersbanders1'), ('cpassword', 'Andersbanders1')])
-2022-11-04 09:54:12,413 INFO User anders registered.
-2022-11-04 09:54:12,413 INFO 127.0.0.1 - - [04/Nov/2022 09:54:12] "[32mPOST /register HTTP/1.1[0m" 302 -
-2022-11-04 09:54:12,737 INFO 127.0.0.1 - - [04/Nov/2022 09:54:12] "GET /login HTTP/1.1" 200 -
-2022-11-04 09:54:12,998 INFO 127.0.0.1 - - [04/Nov/2022 09:54:12] "GET /highlight.css HTTP/1.1" 200 -
-2022-11-04 09:54:20,946 INFO Received form: valid [] {}
-2022-11-04 09:54:20,947 DEBUG ImmutableMultiDict([('csrf_token', 'IjJlYTQzMTg2NmEyMDE5Y2RhMTAxNDFiNjcwZjI4NTdlYWNjZjI0YmEi.Y2TTNA.0qSZMd3B--JTBqqyGPWICKb9zmI'), ('username', 'anders'), ('password', 'Andersbanders1')])
-2022-11-04 09:54:21,151 INFO User anders logged in.
-2022-11-04 09:54:21,152 INFO 127.0.0.1 - - [04/Nov/2022 09:54:21] "[32mPOST /login HTTP/1.1[0m" 302 -
-2022-11-04 09:54:21,496 INFO 127.0.0.1 - - [04/Nov/2022 09:54:21] "GET / HTTP/1.1" 200 -
-2022-11-04 09:54:21,743 INFO 127.0.0.1 - - [04/Nov/2022 09:54:21] "GET /highlight.css HTTP/1.1" 200 -
-2022-11-04 09:54:21,831 INFO 127.0.0.1 - - [04/Nov/2022 09:54:21] "GET /user HTTP/1.1" 200 -
-2022-11-04 09:54:22,076 INFO 127.0.0.1 - - [04/Nov/2022 09:54:22] "GET /message HTTP/1.1" 200 -
-2022-11-04 09:54:26,781 INFO 127.0.0.1 - - [04/Nov/2022 09:54:26] "GET /message HTTP/1.1" 200 -
-2022-11-04 09:54:32,074 INFO 127.0.0.1 - - [04/Nov/2022 09:54:32] "GET /message HTTP/1.1" 200 -
-2022-11-04 09:54:36,763 INFO 127.0.0.1 - - [04/Nov/2022 09:54:36] "GET /message HTTP/1.1" 200 -
-2022-11-04 09:54:42,716 INFO 127.0.0.1 - - [04/Nov/2022 09:54:42] "GET /message HTTP/1.1" 200 -
-2022-11-04 09:54:47,408 INFO 127.0.0.1 - - [04/Nov/2022 09:54:47] "GET /message HTTP/1.1" 200 -
-2022-11-04 09:54:52,075 INFO 127.0.0.1 - - [04/Nov/2022 09:54:52] "GET /message HTTP/1.1" 200 -
-2022-11-04 09:54:57,415 INFO 127.0.0.1 - - [04/Nov/2022 09:54:57] "GET /message HTTP/1.1" 200 -
-2022-11-04 09:55:02,715 INFO 127.0.0.1 - - [04/Nov/2022 09:55:02] "GET /message HTTP/1.1" 200 -
-2022-11-04 09:55:07,406 INFO 127.0.0.1 - - [04/Nov/2022 09:55:07] "GET /message HTTP/1.1" 200 -
+2022-11-04 10:40:33,850 INFO [33mPress CTRL+C to quit[0m
+2022-11-04 10:40:36,291 INFO 127.0.0.1 - - [04/Nov/2022 10:40:36] "GET /message HTTP/1.1" 200 -
+2022-11-04 10:40:37,316 INFO Search for query hei
+2022-11-04 10:40:37,317 INFO 127.0.0.1 - - [04/Nov/2022 10:40:37] "GET /search?q=hei HTTP/1.1" 200 -
+2022-11-04 10:40:38,894 INFO Search for query hei
+2022-11-04 10:40:38,895 INFO 127.0.0.1 - - [04/Nov/2022 10:40:38] "GET /search?q=hei HTTP/1.1" 200 -
+2022-11-04 10:40:41,153 INFO 127.0.0.1 - - [04/Nov/2022 10:40:41] "GET / HTTP/1.1" 200 -
+2022-11-04 10:40:41,420 INFO 127.0.0.1 - - [04/Nov/2022 10:40:41] "GET /highlight.css HTTP/1.1" 200 -
+2022-11-04 10:40:41,499 INFO 127.0.0.1 - - [04/Nov/2022 10:40:41] "GET /user HTTP/1.1" 200 -
+2022-11-04 10:40:41,731 INFO 127.0.0.1 - - [04/Nov/2022 10:40:41] "[36mGET /favicon.png HTTP/1.1[0m" 304 -
+2022-11-04 10:40:41,736 INFO 127.0.0.1 - - [04/Nov/2022 10:40:41] "GET /message HTTP/1.1" 200 -
+2022-11-04 10:40:42,191 INFO Search for query *
+2022-11-04 10:40:42,192 INFO 127.0.0.1 - - [04/Nov/2022 10:40:42] "GET /search?q=* HTTP/1.1" 200 -
+2022-11-04 10:40:46,758 INFO 127.0.0.1 - - [04/Nov/2022 10:40:46] "GET /message HTTP/1.1" 200 -
+2022-11-04 10:40:47,531 INFO Search for query hei
+2022-11-04 10:40:47,533 INFO 127.0.0.1 - - [04/Nov/2022 10:40:47] "GET /search?q=hei HTTP/1.1" 200 -
+2022-11-04 10:40:49,501 INFO Search for query hei
+2022-11-04 10:40:49,503 INFO 127.0.0.1 - - [04/Nov/2022 10:40:49] "GET /search?q=hei HTTP/1.1" 200 -
+2022-11-04 10:40:51,435 INFO 127.0.0.1 - - [04/Nov/2022 10:40:51] "GET /message HTTP/1.1" 200 -
+2022-11-04 10:40:54,639 INFO Search for query hei
+2022-11-04 10:40:54,640 INFO 127.0.0.1 - - [04/Nov/2022 10:40:54] "GET /search?q=hei HTTP/1.1" 200 -
+2022-11-04 10:40:57,405 INFO 127.0.0.1 - - [04/Nov/2022 10:40:57] "GET /message HTTP/1.1" 200 -
+2022-11-04 10:41:02,726 INFO 127.0.0.1 - - [04/Nov/2022 10:41:02] "GET /message HTTP/1.1" 200 -
+2022-11-04 10:41:07,415 INFO 127.0.0.1 - - [04/Nov/2022 10:41:07] "GET /message HTTP/1.1" 200 -
+2022-11-04 10:41:12,722 INFO 127.0.0.1 - - [04/Nov/2022 10:41:12] "GET /message HTTP/1.1" 200 -
+2022-11-04 10:41:17,417 INFO 127.0.0.1 - - [04/Nov/2022 10:41:17] "GET /message HTTP/1.1" 200 -
