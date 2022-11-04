@@ -25,8 +25,10 @@ class DataHandler():
     def get_user(self, username) -> User:
         return User.query.filter_by(username=username).first()
     
-    def get_search(self, query) -> List[Message]:
-        return db.session.execute(db.select(Message).filter_by(message=query)).scalars()
+    def get_search(self, query, authenticated_user: User) -> List[Message]:
+        return Message.query.join(Message.recipients).options(contains_eager(Message.recipients)) \
+            .filter(or_(User.id == authenticated_user.id, Message.sender_id == authenticated_user.id)) \
+            .filter(Message.content.contains(query)).order_by(Message.timestamp).all()
     
     def add_user(self, username, password) -> None:
         hash, salt = hash_password(password)
