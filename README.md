@@ -82,22 +82,27 @@ Lastly, in terms of availability there were three issues:
     - DDOS attacks
 
 ## Attack Vectors
+The application had many attack vectors. Though some could be debated we formed this list for the application:
+
+- Session Hijacking
+- Security Misconfiguration
 - Cryptographic Failures
 - Injection
     - Cross Site Scripting
     - SQL Injection
-- Security Misconfiguration
-- Session Hijacking
 - Broken Access Control
 - Identification and Authentication Failures
 - Security Logging and Monitoring Failures
 - Insecure Design
 
 ## Control measures
-TODO
-
-## Access Control Model
-TODO
-
-## Traceability
-TODO
+- To prevent session hijacking the secret key is now stored in an environment variable that is accessed through the configuration file. For testing purposes there has been made one configuration file for development and another for production. An alternative could also be to store it directly in the configuration file and keep this file stored securely.
+- Sensitive information has been protected by hashing and salting passwords aswell as storing them in the database. Ideally this information would be stored in a separate database.
+- SQL injection attacks have been mitigated by using SQLAlchemys functionality. All user input is escaped before queries are made.
+- XSS attacks have been mitigated by replacing <code>innerHtml</code> with <code>setHTML</code> (or <code>setText</code> if browser doesn't support <code>setHTML</code>). <code>setHTML</code> sanitizes the data before adding it to the DOM.
+- To handle access control most methods have been made unavailable unless a user is logged in. Additionally, a user can no longer set who has sent a message. Also, a user can no longer access messages where they are not the sender or on the recipient list.
+- Authentication is now done by checking the provided password against the hashed password in the database. If the hash of the provided password doesn't match the user is denied access.
+- CSRF attacks have been mitigated by applying a CSRF token to all forms. Further, all forms are now validated by applying custom validators for each field. This includes minimum lengths for passwords, required inputs, checks for unwanted characters and more. If a form is invalid, the user will be redirected to page and no data is sent to the server.
+- Flask default <code>next</code>-parameter on redirect has been made obsolete. This is to prevent the user trying to redirect to unwanted URLs. Further the cookie settings has been set to require same-site origin for requests.
+- In addition to same-site, cookies have been set to be secure meaning they can only be transferred by HTTPS. To avoid being read by JavaScript they have also been given HttpOnly attribute.
+- To help with traceability in the case of an attack we have added logging to the application. Most logged events are either debug or info. We have tried to mark logged events with warning in places where we think the application could be exploited.
