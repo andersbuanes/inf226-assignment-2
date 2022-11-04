@@ -45,7 +45,7 @@ def index_html():
 
 @routes.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterForm()
+    form = RegisterForm(request.form)
     if form.is_submitted():
         logging.info(f'Received form: {"invalid" if not form.validate() else "valid"} {form.form_errors} {form.errors}')
         logging.debug(request.form)
@@ -65,7 +65,7 @@ def register():
 
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
+    form = LoginForm(request.form)
     if form.is_submitted():
         logging.info(f'Received form: {"invalid" if not form.validate() else "valid"} {form.form_errors} {form.errors}')
         logging.debug(request.form)

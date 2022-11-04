@@ -9,7 +9,7 @@ class LoginForm(FlaskForm):
             InputRequired(),
             Length(min=3, max=15),
             Regexp(
-                "^[A-Za-z][A-Za-z0-9_.]*$",
+                "^[A-Za-z][A-Za-z0-9_.\-]*$",
                 0,
                 "Username can only contain letters, numbers, dots or underscores"
             )

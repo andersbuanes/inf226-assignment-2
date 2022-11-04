@@ -79,10 +79,19 @@
 
           <dt>Username:</dt>
           <dd>{{ form.username }}</dd>
+          {% for error in form.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
           <dt>Password:</dt>
           <dd>{{ form.password }}</dd>
+          {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
           <dt>Confirm password:</dt>
           <dd>{{ form.cpassword }}</dd>
+          {% for error in form.cpassword.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
         </dl>
         <p>
           <input type="submit" value="Register" />
